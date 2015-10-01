@@ -7,13 +7,21 @@ Rickshaw.Graph.Behavior.Series.Order = function(args) {
 
 	var self = this;
 
-	$(function() {
-		$(self.legend.list).sortable( { 
+	if (typeof window.jQuery == 'undefined') {
+		throw "couldn't find jQuery at window.jQuery";
+	}
+
+	if (typeof window.jQuery.ui == 'undefined') {
+		throw "couldn't find jQuery UI at window.jQuery.ui";
+	}
+
+	jQuery(function() {
+		jQuery(self.legend.list).sortable( {
 			containment: 'parent',
 			tolerance: 'pointer',
 			update: function( event, ui ) {
 				var series = [];
-				$(self.legend.list).find('li').each( function(index, item) {
+				jQuery(self.legend.list).find('li').each( function(index, item) {
 					if (!item.series) return;
 					series.push(item.series);
 				} );
@@ -25,7 +33,7 @@ Rickshaw.Graph.Behavior.Series.Order = function(args) {
 				self.graph.update();
 			}
 		} );
-		$(self.legend.list).disableSelection();
+		jQuery(self.legend.list).disableSelection();
 	});
 
 	//hack to make jquery-ui sortable behave

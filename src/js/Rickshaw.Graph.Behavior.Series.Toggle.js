@@ -8,6 +8,7 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 	var self = this;
 
 	this.addAnchor = function(line) {
+
 		var anchor = document.createElement('a');
 		anchor.innerHTML = '&#10004;';
 		anchor.classList.add('action');
@@ -18,10 +19,14 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 				line.series.enable();
 				line.element.classList.remove('disabled');
 			} else { 
+				if (this.graph.series.filter(function(s) { return !s.disabled }).length <= 1) return;
 				line.series.disable();
 				line.element.classList.add('disabled');
 			}
-		}
+
+			self.graph.update();
+
+		}.bind(this);
 		
                 var label = line.element.getElementsByTagName('span')[0];
                 label.onclick = function(e){
@@ -66,26 +71,32 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 
                         }
 
+                        self.graph.update();
+
                 };
 
 	};
 
 	if (this.legend) {
 
-                $(this.legend.list).sortable( {
-                        start: function(event, ui) {
-                                ui.item.bind('no.onclick',
-                                        function(event) {
-                                                event.preventDefault();
-                                        }
-                                );
-                        },
-                        stop: function(event, ui) {
-                                setTimeout(function(){
-                                        ui.item.unbind('no.onclick');
-                                }, 250);
-                        }
-                })
+		var $ = jQuery;
+		if (typeof $ != 'undefined' && $(this.legend.list).sortable) {
+
+			$(this.legend.list).sortable( {
+				start: function(event, ui) {
+					ui.item.bind('no.onclick',
+						function(event) {
+							event.preventDefault();
+						}
+					);
+				},
+				stop: function(event, ui) {
+					setTimeout(function(){
+						ui.item.unbind('no.onclick');
+					}, 250);
+				}
+			});
+		}
 
 		this.legend.lines.forEach( function(l) {
 			self.addAnchor(l);
@@ -103,12 +114,10 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 				}
 				
 				s.disabled = true;
-				self.graph.update();
 			};
 
 			s.enable = function() {
 				s.disabled = false;
-				self.graph.update();
 			};
 		} );
 	};

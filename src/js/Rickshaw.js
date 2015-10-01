@@ -1,3 +1,5 @@
+/* jshint -W079 */ 
+
 var Rickshaw = {
 
 	namespace: function(namespace, obj) {
@@ -26,11 +28,9 @@ var Rickshaw = {
 			destination[property] = source[property];
 		}
 		return destination;
+	},
+
+	clone: function(obj) {
+		return JSON.parse(JSON.stringify(obj));
 	}
 };
-
-if (typeof module !== 'undefined' && module.exports) {
-	var d3 = require('d3');
-	module.exports = Rickshaw;
-}
-
